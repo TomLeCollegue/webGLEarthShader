@@ -295,7 +295,12 @@
             //earthGroup.rotation.y += chosenAngle / 29.5;
             //moon.rotation.y += chosenAngle / 27.32;
 
-            uniforms.sunDirection.value = directionalLight.matrixWorld.getPosition().normalize();
+            //uniforms.sunDirection.value = directionalLight.matrixWorld.getPosition().normalize();
+            vect = new THREE.Vector3;
+            vect.setFromMatrixPosition(directionalLight.matrixWorld);
+            uniforms.sunDirection.value = vect;
+            
+
 
       
 
