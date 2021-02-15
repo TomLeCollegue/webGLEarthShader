@@ -118,8 +118,6 @@
         var cube = null;
         var curTime = Date.now();
 
-
-
         // This function is called whenever the document is loaded
         function init() {
 
@@ -149,9 +147,7 @@
             camera = new THREE.PerspectiveCamera(fov, aspect,
                 near, far);
 
-            camera.position.x = -100;
-            camera.position.z = 50;
-            camera.rotation.y = -Math.PI/2;
+            camera.position.x = 100;
 
             var path = "images/MilkyWay/";
             var format = '.jpg';
@@ -164,72 +160,77 @@
             textureCube.format = THREE.RGBFormat;
             scene.background   = textureCube;
 
-            // SolarSystem
-            solarSystem = new THREE.Group();
-            solarSystem.position.z = 0;
-
-            // The Earth's System -----------------------------------------------------------------------------------------------------------
-            earthSun = new THREE.Group();
-            earthGroup = new THREE.Group();
-            earthGroup.position.x = 700;
             
-            
-            
-            earthcameraGroup = new THREE.Group();
-            earthcameraGroup.add(camera);
-            earthGroup.add(earthcameraGroup);
-            earthcameraGroup.rotation.z = -Math.PI/4;
-            earthcameraGroup.rotation.y = Math.PI *0.75;
-
             directionalLight = new THREE.DirectionalLight( 0xF4E5A6, 2 );
             directionalLight.position.set(-1, 0, 0);
-            earthSun.add( directionalLight );
+            scene.add( directionalLight );
+
             
-
-
+            
             const textureLoader = new THREE.TextureLoader();
             uniforms = {
-            sunDirection: {value: directionalLight.position.normalize() },
-            dayTexture: { value: textureLoader.load( "images/8k_earth_daymap.jpg" ) },
-            nightTexture: { value: textureLoader.load( "images/8k_earth_nightmap.jpg" ) },
-            tNormal: { value: textureLoader.load( "images/8k_earth_normal_map.png" ) },
-            tSpecular: {value : textureLoader.load("images/8k_earth_specular_map.png")}
+                sunDirection: {value: directionalLight.position.normalize() },
+                dayTexture: { value: textureLoader.load( "images/8k_earth_daymap.jpg" ) },
+                nightTexture: { value: textureLoader.load( "images/8k_earth_nightmap.jpg" ) },
+                tNormal: { value: textureLoader.load( "images/8k_earth_normal_map.png" ) },
+                tSpecular: {value : textureLoader.load("images/8k_earth_specular_map.png")}
             };
             const material = new THREE.ShaderMaterial({
                 uniforms: uniforms,
                 vertexShader: document.getElementById( 'vertexShader' ).textContent,
 	            fragmentShader: document.getElementById( 'fragmentShader' ).textContent
             });
-            
             const geometryEarth = new THREE.SphereGeometry(40, 64, 64);
-            // geometryEarth.computeTangents();
-            earth = new THREE.Mesh( geometryEarth, material );
-            earth.position.set(0, 0, 0);
-            earth.rotation.x = Math.PI/6;
-            //earth.rotation.y = 2*Math.PI ;
-            earthGroup.add(earth);
             
-
-        
+            
+        //Group earth pour orientation
+            earthGroup = new THREE.Group();
+            earthGroup.position.x = 0;
+            //earthGroup.rotation.x = Math.PI * 0.13;
+            earthGroup.rotation.z = Math.PI * 0.13;
+            earthGroup.rotation.y = Math.PI ;
+            
+            // EARTH 
+            earth = new THREE.Mesh( geometryEarth, material );
+            earthGroup.add(earth);
+            north = createPlanet("images/8k_moon.jpg", null, null, 5, [0, 40, 0], [0, 0, 0],null, false, false);
+            earthGroup.add(north);
             // The clouds :
-            cloud = createPlanet("images/8k_earth_clouds.jpg", null, null, 40.5, [0, 0, 0], [Math.PI / 7.5, 0, 0], "images/8k_earth_clouds.jpg", false, false, true, 0.6);
+            cloud = createPlanet("images/8k_earth_clouds.jpg", null, null, 40.5, [0, 0, 0], [0, 0, 0], "images/8k_earth_clouds.jpg", false, false, true, 0.6);
             earthGroup.add(cloud)
-            //The Moon
-            moon = createPlanet("images/8k_moon.jpg", null, null, 16, [0, 0, 100], [0, 0, 0],null, false, false);
-            earthGroup.add(moon);
-            earthSun.add(earthGroup);
-            solarSystem.add(earthSun);
-            // The Sun ----------------------------------------------------------------------------------------------------------------------
-            sunGroup = new THREE.Group();
-            sun = createPlanet("images/2k_sun.jpg", null, null, 80, [0, 0, 0], [0, 0, 0],null, false, false, false, 1, true);
-            sunGroup.add(sun);        
-            solarSystem.add(sunGroup);
             //-------------------------------------------------------------------------------------------------------------------------------
-            scene.add(solarSystem);
-            //controls = new THREE.OrbitControls(camera, canvas);
-            //controls.target.set(700, 0, 0);
-        }
+            scene.add(earthGroup);
 
+
+            // get hour;
+            var today = new Date();
+            var hour = today.getHours();
+            var minuteDecimal = today.getMinutes() / 60
+            hour = hour + minuteDecimal;
+
+            days =  Math.floor(( today - Date.parse("12/21/2020") ) / 86400000); 
+            //days =  Math.floor(( Date.parse("07/1/2021") - Date.parse("12/21/2020") ) / 86400000); 
+
+            //days = 150;
+            //Aply rotation with the day for the season
+            earthGroup.rotation.y += days * ((Math.PI * 2)/365);
+
+            //Compensation Season on earth
+            earth.rotation.y -=   days * ((Math.PI * 2)/365);
+
+            //rotation for midnight
+            earth.rotation.y += Math.PI * 0.9;
+            earth.rotation.y +=   hour * ((Math.PI * 2)/24);
+
+
+            date_evenement = new Date("May 10 00:00:00 2021");
+
+
+            
+            //controls = new THREE.OrbitControls(camera, canvas);
+            //controls.target.set(0, 0, 0);
+        }
+        
         // This function is called regularly to update the canvas webgl.
         function run() {
             // Ask to call again run 
@@ -267,12 +268,9 @@
             var fracTime = deltaTime / 1000; // in seconds
             var angle = 0.1 * Math.PI * 2 * fracTime; // one turn per 10 second.
             var angle1jour = angle / 6 / 60 / 24
-
             var chosenAngle = angle;
 
-            //Sun
-            sun.rotation.y += chosenAngle /27;
-
+           
             
             var today = new Date();
             var h = today.getHours();
@@ -281,17 +279,29 @@
             // add a zero in front of numbers<10
             m = checkTime(m);
             s = checkTime(s);
-            document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+
+            var total_secondes = (date_evenement - today) / 1000;
+            var jours = Math.floor(total_secondes / (60 * 60 * 24));
+            var heures = Math.floor((total_secondes - (jours * 60 * 60 * 24)) / (60 * 60));
+            minutes = Math.floor((total_secondes - ((jours * 60 * 60 * 24 + heures * 60 * 60))) / 60);
+            secondes = Math.floor(total_secondes - ((jours * 60 * 60 * 24 + heures * 60 * 60 + minutes * 60)));
+            document.getElementById('time').innerHTML = jours + " j " + heures + " h " + minutes + " m " + secondes + " s";
+
+
+        // DISPLAY DAY
+            //var days =  Math.floor(( today - Date.parse("12/21/2020") ) / 86400000); 
+            //document.getElementById('time').innerHTML = days;
             
             
-            earthGroup.rotation.y += chosenAngle/3;
-            cloud.rotation.y += chosenAngle/10;
+            //earth.rotation.y += chosenAngle/3;
+            //cloud.rotation.y += chosenAngle/3;
+            earthGroup.rotation.y += angle1jour/365;
             
             
             
             
             //Earth
-            earthSun.rotation.y += chosenAngle /20;
+            //earthSun.rotation.y += chosenAngle /20;
             //earthGroup.rotation.y += chosenAngle / 29.5;
             //moon.rotation.y += chosenAngle / 27.32;
 
@@ -306,7 +316,7 @@
 
             
 
-            //camera.lookAt(earth.matrixWorld.getPosition());
+            camera.lookAt(earth.matrixWorld.getPosition());
             //controls.update();
         }
 
@@ -355,8 +365,8 @@
 
 <body style="position: relative;">
     <canvas id="webglcanvas" style="border: none;background-color:#000000" width="100%"></canvas>
-    <div class="text" style="position: absolute; top: 40%; right: 20%; color: aliceblue;">
-        <!-- <p style="font-size: 100px; font-family: 'Bebas Neue', cursive;">Avant le 10 Mai</p>-->
+    <div class="text" style="position: absolute; right: 5%;bottom: 0% ;color: aliceblue; margin-bottom: -200px;">
+        <p style="font-size: 100px; font-family: 'Bebas Neue', cursive;">Avant le 10 Mai</p>
         <p id="time" style="font-size: 300px; font-family: 'Bebas Neue', cursive; margin-top: -100px;">00 : 00</p> 
 
     </div>
