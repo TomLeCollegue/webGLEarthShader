@@ -248,6 +248,14 @@
             renderer.render(scene, camera);
         }
 
+        
+        function checkTime(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+        }
+
         // This function is called regularly to update objects.
         function animate() {
 
@@ -342,9 +350,9 @@
 
 <body style="position: relative;">
     <canvas id="webglcanvas" style="border: none;background-color:#000000" width="100%"></canvas>
-    <div class="text" style="position: absolute; top: 20%; right: 20%; color: aliceblue;">
-        <p style="font-size: 100px; font-family: 'Bebas Neue', cursive;">Avant le 10 Mai</p>
-        <p id="time" style="font-size: 300px; font-family: 'Bebas Neue', cursive; margin-top: -100px;">00 : 00</p>
+    <div class="text" style="position: absolute; top: 40%; right: 20%; color: aliceblue;">
+        <!-- <p style="font-size: 100px; font-family: 'Bebas Neue', cursive;">Avant le 10 Mai</p>-->
+        <p id="time" style="font-size: 300px; font-family: 'Bebas Neue', cursive; margin-top: -100px;">00 : 00</p> 
 
     </div>
     <script>
