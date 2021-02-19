@@ -1,6 +1,7 @@
 # `Earth WebGL` 
 ###   📱 A website in tree.js that show the Earth with real day and night time ! 
 ###   See the result : [![Website](https://img.shields.io/static/v1?label=WebGlEarth:&message=v1.0&color=blue)](https://tomlecollegue.github.io/webGLEarthShader/noTimer.html)
+###   Wallpaper Version : [![Website](https://img.shields.io/static/v1?label=WallPaper:&message=v1.0&color=blue)](http://89.87.13.28:8181/nextcloud/index.php/s/EKzYGMDnD7bdHr2)
 <img src="https://github.com/TomLeCollegue/webGLEarthShader/blob/master/earth2.gif?raw=true" alt="drawing" width=100% align="center" />
 
 
@@ -117,6 +118,21 @@ var minuteDecimal = today.getMinutes() / 60
 hour = hour + minuteDecimal;
 earthWCamera.rotation.y +=   hour * ((Math.PI * 2)/24);
 ```
+
+Pour finir, On fait tourner la terre dans "animate" car on a une version fond d'ecran qui doit evoluer dans la journée.
+```js
+var angle = 0.1 * Math.PI * 2 * fracTime; // one turn per 10 second.
+var angle1jour = angle / 6 / 60 / 24
+var chosenAngle = angle1jour;
+
+earthGroup.rotation.y += chosenAngle/365;
+earthWCamera.rotation.y += chosenAngle;
+cloud.rotation.y += angle/30
+```
+
+
+
+
 
 
 
