@@ -101,6 +101,25 @@ pour calculer la saison, on calcule la difference de jour en le 21 decembre et l
 days =  Math.floor(( today - Date.parse("12/21/2020") ) / 86400000); 
 ```
 On sait que la terre revient au meme endroit par rapport au soleil en 365 jours
+chaque jour on a donc une rotation de (2PI)/365, on fait donc : 
+```js
+//Aply rotation with the day for the season
+ earthGroup.rotation.y += days * ((Math.PI * 2)/365);
+
+ //Compensation Season on earth
+ earthWCamera.rotation.y -=   days * ((Math.PI * 2)/365);
+```
+
+On fait la meme chose pour la rotation de la terre en elle meme en 24h
+```js
+var hour = today.getHours();
+var minuteDecimal = today.getMinutes() / 60
+hour = hour + minuteDecimal;
+earthWCamera.rotation.y +=   hour * ((Math.PI * 2)/24);
+```
+
+
+
 
 
 
