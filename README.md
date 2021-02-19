@@ -85,6 +85,24 @@ gl_FragColor = vec4( color, 1.0 );
 #### Notre Terre est maintenant toute belle !
 
 ### Maintenant il faut l'orienter en fonction de la saison et de l'heure de la journée.
+Cette partie est un petit peu approximative mais au final cela est plutot credible !
+
+on met la terre dans un groupe, le groupe sera incliné de PI * 0.13 qui est l'inclinaison par rapport a l'axe de la terre.
+cela nous permet de faire la rotation sur elle meme de la planete en 24h, mais aussi modifier la rotation en fonction de la saison.
+
+On part du fait que :
+ * à minuit le soleil nous oppose au maximum.
+ * le 21 decembre, le pole nord est le plus eloigné du soleil de part la rotation de la Terre. 
+
+Au lancement du site on met la terre tel qu'il soit minuit le 21 decembre.
+
+pour calculer la saison, on calcule la difference de jour en le 21 decembre et la date du jour.
+```js
+days =  Math.floor(( today - Date.parse("12/21/2020") ) / 86400000); 
+```
+On sait que la terre revient au meme endroit par rapport au soleil en 365 jours
+
+
 
 
 
