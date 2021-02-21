@@ -6,6 +6,9 @@
 
 
 ## `Explication TP`
+
+### Le code en question est visible sur `noTimer.html`
+
 Je voulais faire une Terre avec la partie sombre avec les lumieres des villes et la partie éclairée avec avec la texture de la Terre de base. 
 De base dans Three.js, il y a quelques Materiels par default avec des shaders pré-fait, avec la possibilité de mettre une map, une normalMap, une spacular map, alphaMap, etc...
 
